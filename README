@@ -1,0 +1,39 @@
+Test the reverse proxy module of NaviServer via HTTP and HTTPS with different sizes.
+The configuration uses a backend server (running per default on port 18091)
+and a reverse proxy server (running per default on port 18090 for HTTP and
+48090 from https). The reverse proxy server forwards its requests to the
+backend server.
+
+It is assumed that NaviServer and its reverse proxy module are already
+installed (per default under /usr/local/ns/). To install these packages, see
+
+    https://bitbucket.org/naviserver/naviserver/src/master/
+    https://bitbucket.org/naviserver/revproxy/src/master/
+
+For debugging, it is recommended to start the two NaviServer instances in different terminals
+and to run the curl requests from a third terminal. The backend server runs a script
+receiver.tcl, which receives the POST data from the request and returns its size.
+To generate the sample files and install the receiver, run in this directory
+
+   make
+
+In case NaviServer is installed at a different place, adjust the Makefile.
+
+Start backend and reverse proxy server:
+   NS_HTTP_PORT=18091 /usr/local/ns/bin/nsd -f -u nsadmin -g nsadmin -t nsd-config-backend.tcl
+   NS_HTTPS_PORT=48090 NS_HTTP_PORT=18090 /usr/local/ns/bin/nsd -f -u nsadmin -g nsadmin -t nsd-config-revproxy.tcl
+
+Direct backend requests:
+   curl -v -X POST -T 100KB http://127.0.0.1:18091/receiver.tcl
+   curl -v -X POST -T 1MB http://127.0.0.1:18091/receiver.tcl
+   curl -v -X POST -T 10MB http://127.0.0.1:18091/receiver.tcl
+
+Reverse proxy requests:
+   curl -v -X POST -H Expect: -T 100KB http://127.0.0.1:18090/receiver.tcl
+   curl -v -X POST -H Expect: -T 1MB http://127.0.0.1:18090/receiver.tcl
+   curl -v -X POST -H Expect: -T 10MB http://127.0.0.1:18090/receiver.tcl
+
+   curl -v -k -X POST -H Expect: -T 100KB https://127.0.0.1:48090/receiver.tcl
+   curl -v -k -X POST -H Expect: -T 1MB https://127.0.0.1:48090/receiver.tcl
+   curl -v -k -X POST -H Expect: -T 10MB https://127.0.0.1:48090/receiver.tcl
+
