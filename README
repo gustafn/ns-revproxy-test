@@ -27,13 +27,15 @@ Direct backend requests:
    curl -v -X POST -T 100KB http://127.0.0.1:18091/receiver.tcl
    curl -v -X POST -T 1MB http://127.0.0.1:18091/receiver.tcl
    curl -v -X POST -T 10MB http://127.0.0.1:18091/receiver.tcl
+   curl -v -X GET --output /dev/null http://127.0.0.1:18091/10MB
 
 Reverse proxy requests:
    curl -v -X POST -H Expect: -T 100KB http://127.0.0.1:18090/receiver.tcl
    curl -v -X POST -H Expect: -T 1MB http://127.0.0.1:18090/receiver.tcl
    curl -v -X POST -H Expect: -T 10MB http://127.0.0.1:18090/receiver.tcl
+   curl -v -X GET --output /dev/null http://127.0.0.1:18090/10MB
 
    curl -v -k -X POST -H Expect: -T 100KB https://127.0.0.1:48090/receiver.tcl
    curl -v -k -X POST -H Expect: -T 1MB https://127.0.0.1:48090/receiver.tcl
    curl -v -k -X POST -H Expect: -T 10MB https://127.0.0.1:48090/receiver.tcl
-
+   curl -v -k -X GET --output /dev/null https://127.0.0.1:48090/10MB
